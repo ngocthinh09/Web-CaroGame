@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caro Game</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="game-container">
+        <div id="gameModeTitle" class="game-mode-title"></div>
+
+        <div class="game-info">
+            <div class="current-turn">
+                <span class="player-indicator"></span>
+                <span class="turn-text">Current Turn</span>
+            </div>
+
+            <div class="game-actions">
+                <button id="resetBtn" class="btn btn-secondary">Reset</button>
+                <button id="homeBtn" class="btn btn-secondary">Home</button>
+            </div>
+        </div>
+        <div id="winMessage" class="win-message"></div>
+        <div id="gameBoard" class="board"></div>
+    </div>
+    <script src="scripts/board.js"></script>
+</body>
+</html>

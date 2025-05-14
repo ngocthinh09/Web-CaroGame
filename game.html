@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caro Game</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="mode-selection-card">
+            <h2>Caro Game</h2>
+            <p>Challenge your friends or test your skills against the AI</p>
+            <div class="mode-buttons">
+                <div class="mode-option" onclick="startGame('pvp')">
+                    <div class="mode-icon">👥</div>
+                    <h3>PvP</h3>
+                    <p>Play against another player</p>
+                </div>
+                <div class="mode-option" onclick="startGame('pve')">
+                    <div class="mode-icon">🤖</div>
+                    <h3>PvE</h3>
+                    <p>Challenge our AI opponent</p>
+                </div>
+            </div>
+            <button onclick="window.location.href='index.html'" class="btn btn-back">Back</button>
+        </div>
+    </div>
+    <script src="scripts/game-selection.js"></script>
+</body>
+</html>
