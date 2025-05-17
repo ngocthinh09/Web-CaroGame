@@ -1,6 +1,16 @@
 const BoardSize = 15;
 const winCondition = 5;
 
+const homeBtn = document.getElementById('homeBtn')
+const resetBtn = document.getElementById('resetBtn')
+const saveBtn = document.getElementById('saveBtn')
+const saveModal = document.getElementById('saveModal')
+const saveNameInput = document.getElementById('saveNameInput')
+const confirmSaveBtn = document.getElementById('confirmSaveBtn')
+const cancelSaveBtn = document.getElementById('cancelSaveBtn')
+const loadingModal = document.getElementById('loadingModal');
+const successModal = document.getElementById('successModal');
+
 class GomokuGame {
     constructor() {
         this.board = Array(BoardSize).fill().map(() => Array(BoardSize).fill(''));
@@ -8,6 +18,7 @@ class GomokuGame {
         this.gameMode = sessionStorage.getItem('gameMode') || 'pvp';
         this.gameActive = true;
         this.winningCells = [];
+        this.moveList = [];
         this.initializeBoard();
         this.updateTurnIndicator();
         this.setupButtons();
@@ -15,14 +26,33 @@ class GomokuGame {
     }
 
     setupButtons() {
-        document.getElementById('resetBtn').onclick = () => this.resetGame();
-        document.getElementById('homeBtn').onclick = () => window.location.href = 'index.html';
+        // Thiết lập các nút chức năng  
+        homeBtn.onclick = () => window.location.href = 'index.html';    // Khi click vào Home sẽ chuyển hướng về MeguPage
+        resetBtn.onclick = () => this.resetGame();                      // Khi click vào sẽ kích hoạt hàm reset bàn cờ
+        saveBtn.onclick = () => {
+            saveModal.style.display = 'flex';                           // Khi click nút Save sẽ xuất hiện bảng lưu game
+        };
+        cancelSaveBtn.onclick = () => {
+            saveModal.style.display = 'none';                           // Khi click nút Cancel trên bảng lưu sẽ tắt bảng lưu game 
+            saveNameInput.value = '';
+        };
+        confirmSaveBtn.onclick = () => {
+            const name = saveNameInput.value.trim();
+            const errorMessage = document.getElementById('error-message');
+            if (!name) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+            errorMessage.style.display = 'none';
+            saveModal.style.display = 'none';
+            saveNameInput.value = '';
+            this.saveGameRecord(name);
+        };
     }
 
     showWinMessage(winner) {
         const winMessage = document.getElementById('winMessage');
         winMessage.innerHTML = `<span class="trophy">🏆</span> <span style="color:#27ae60">Player ${winner} Wins!</span>`;
-        // Ẩn current turn khi có người thắng
         const turnIndicator = document.querySelector('.current-turn');
         if (turnIndicator) turnIndicator.style.display = 'none';
     }
@@ -30,12 +60,13 @@ class GomokuGame {
     clearWinMessage() {
         const winMessage = document.getElementById('winMessage');
         winMessage.innerHTML = '';
-        // Hiện lại current turn khi reset
+
         const turnIndicator = document.querySelector('.current-turn');
         if (turnIndicator) turnIndicator.style.display = 'flex';
     }
 
-    highlightWinningCells() {
+    highlightWinningCells() {   
+        // Khi có người chơi thắng, sẽ thêm các class .win vào cho các ô trên đường chiến thắng để highlight các ô chiến thắng
         for (const [row, col] of this.winningCells) {
             const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
             if (cell) cell.classList.add('win');
@@ -47,6 +78,7 @@ class GomokuGame {
         this.currentPlayer = 'X';
         this.gameActive = true;
         this.winningCells = [];
+        this.moveList = [];
         this.initializeBoard();
         this.updateTurnIndicator();
         this.clearWinMessage();
@@ -66,6 +98,8 @@ class GomokuGame {
                 boardElement.appendChild(cell);
             }
         }
+
+        saveBtn.style.display = 'none';
     }
 
     makeMove(row, col) {
@@ -74,10 +108,17 @@ class GomokuGame {
         this.board[row][col] = this.currentPlayer;
         this.updateCell(row, col);
 
+        this.moveList.push({
+            x : row,
+            y : col,
+            symbol : this.currentPlayer
+        })
+
         if (this.checkWin(row, col)) {
             this.gameActive = false;
             this.showWinMessage(this.currentPlayer);
             this.highlightWinningCells();
+            saveBtn.style.display = 'flex';
             return;
         }
 
@@ -155,11 +196,49 @@ class GomokuGame {
             }
         }
     }
+
+    saveGameRecord(name) {
+        loadingModal.style.display = 'flex';
+
+        const gameData = {
+            nameMatch: name,
+            moveList: this.moveList
+        };
+
+        console.log(gameData)   // debug
+
+        fetch('http://localhost:8000/record/save-game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(gameData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Game saved successfully:', data);
+            
+            loadingModal.style.display = 'none';
+            successModal.style.display = 'flex';
+            setTimeout(() => {
+                successModal.style.display = 'none';
+            }, 1000);
+        })
+        .catch(error => {
+            console.error('Error saving game:', error);
+            loadingModal.style.display = 'none';
+            alert('Failed to save game. Please try again.');
+        });
+    }
 }
 
-// Initialize the game when the page loads
+
 window.addEventListener('DOMContentLoaded', () => {
-    // Set game mode title
     const mode = sessionStorage.getItem('gameMode') || 'pvp';
     const gameModeTitle = document.getElementById('gameModeTitle');
     if (gameModeTitle) {

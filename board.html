@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caro Game</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="game-container">
@@ -17,13 +18,42 @@
             </div>
 
             <div class="game-actions">
-                <button id="resetBtn" class="btn btn-secondary">Reset</button>
-                <button id="homeBtn" class="btn btn-secondary">Home</button>
+                <button id="resetBtn" class="btn btn-secondary" style="font-size: 0.9rem;">Reset</button>
+                <button id="homeBtn" class="btn btn-secondary" style="font-size: 0.9rem;">Home</button>
+                <button id="saveBtn" class="btn btn-secondary" style="font-size: 0.9rem;">Save</button>
             </div>
         </div>
         <div id="winMessage" class="win-message"></div>
         <div id="gameBoard" class="board"></div>
     </div>
+   
+
+    <div id="saveModal" class="modal">
+        <div class="modal-content">
+            <h3>Save Game</h3>
+            <input type="text" id="saveNameInput" placeholder="Enter game name" pattern="[A-Za-z0-9 ]+">
+            <div id="error-message" style="color: red; font-size: 0.9rem; display: none;">Please enter a name for the game.</div>
+            <div class="modal-actions">
+                <button id="confirmSaveBtn" class="btn btn-primary">Save</button>
+                <button id="cancelSaveBtn" class="btn btn-primary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingModal" class="modal">
+        <div class="modal-content loading-content">
+            <i class="fas fa-spinner fa-spin loading-icon"></i>
+            <h3>Saving...</h3>
+        </div>
+    </div>
+    
+    <div id="successModal" class="modal">
+        <div class="modal-content success-content">
+            <i class="fas fa-check-circle success-tick"></i>
+            <h3>Game Saved</h3>
+        </div>
+    </div>
+
     <script src="scripts/board.js"></script>
 </body>
 </html>
