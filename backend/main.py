@@ -37,6 +37,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/scripts", StaticFiles(directory="scripts"), name="scripts")
+app.mount("/styles", StaticFiles(directory="styles"), name="styles")
+
+@app.get("/")
+async def root():
+    return FileResponse("index.html")
+
 # MongoDB connection
 @app.on_event("startup")
 async def startup_db_client():
