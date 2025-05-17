@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caro Game - Replay List</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="replay-list-card">
+            <h2>Saved Games</h2>
+            
+            <div class="list-container">
+                <table class="replay-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Match Name</th>
+                            <th>Saved Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gameRecordsBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="loadingSpinner" class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i> Loading...
+            </div>
+            
+            <button onclick="window.location.href='index.html'" class="btn btn-back">Back to Menu</button>
+        </div>
+    </div>
+    <script src="scripts/replay-list.js"></script>
+</body>
+</html>

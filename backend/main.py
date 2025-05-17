@@ -23,6 +23,7 @@ class Move(BaseModel):
 class GameRecord(BaseModel):
     nameMatch: str
     moveList: List[Move]
+    winningCells: List[List[int]]
     timeSaved: Optional[datetime] = None
 
 app = FastAPI()
@@ -66,17 +67,17 @@ async def save_game(gameRecord: GameRecord):
         raise HTTPException(status_code=500, detail=f"Failed to save game record: {str(error)}")
     
 
-# # Get all game records
-# @app.get("/api/game-records")
-# async def get_game_records():
-#     records = []
-#     cursor = app.mongodb[COLLECTION_NAME].find().sort("timestamp", -1)
+# Get all game records
+@app.get("/record/game-records")
+async def get_game_records():
+    records = []
+    cursor = app.mongodb[COLLECTION_NAME].find().sort("timestamp", -1)
     
-#     async for document in cursor:
-#         document["_id"] = str(document["_id"])  # Convert ObjectId to string
-#         records.append(document)
-    
-#     return records
+    async for document in cursor:
+        document["_id"] = str(document["_id"])
+        print (document)    # debug
+        records.append(document)
+    return records
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, debug=True)

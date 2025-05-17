@@ -131,9 +131,15 @@ class GomokuGame {
     }
 
     updateCell(row, col) {
+        if (this.moveList.length > 0){
+            const lastMove = this.moveList[this.moveList.length - 1];
+            const lastCell = document.querySelector(`[data-row="${lastMove.x}"][data-col="${lastMove.y}"]`);
+            lastCell.classList.remove('highlight-current');
+        }
         const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
         cell.textContent = this.board[row][col];
         cell.classList.add(this.board[row][col].toLowerCase());
+        cell.classList.add('highlight-current');
     }
 
     updateTurnIndicator() {
@@ -143,7 +149,6 @@ class GomokuGame {
             return;
         }
         turnIndicator.style.display = 'flex';
-        // Remove any previous player-x/player-o class
         turnIndicator.classList.remove('player-x', 'player-o');
         turnIndicator.classList.add(`player-${this.currentPlayer.toLowerCase()}`);
         turnIndicator.innerHTML = `
@@ -154,7 +159,7 @@ class GomokuGame {
 
     checkWin(row, col) {
         const directions = [
-            [1, 0], [0, 1], [1, 1], [1, -1] // horizontal, vertical, diagonal
+            [1, 0], [0, 1], [1, 1], [1, -1]
         ];
         for (const [dx, dy] of directions) {
             let count = 1;
@@ -186,7 +191,6 @@ class GomokuGame {
     }
 
     makeBotMove() {
-        // Simple bot implementation - finds first empty cell
         for (let i = 0; i < 15; i++) {
             for (let j = 0; j < 15; j++) {
                 if (this.board[i][j] === '') {
@@ -202,7 +206,8 @@ class GomokuGame {
 
         const gameData = {
             nameMatch: name,
-            moveList: this.moveList
+            moveList: this.moveList,
+            winningCells: this.winningCells
         };
 
         console.log(gameData)   // debug

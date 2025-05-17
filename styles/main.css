@@ -225,20 +225,7 @@ h1, h2 {
     margin-left: auto;
 }
 
-.btn-secondary#homeBtn::before {
-    content: '\1F3E0';
-    margin-right: 6px;
-    font-size: 1.1em;
-}
-
-.btn-secondary#resetBtn::before {
-    content: '\21BB';
-    margin-right: 6px;
-    font-size: 1.1em;
-}
-
-.btn-secondary#saveBtn::before {
-    content: '\1F4BE';
+.btn-secondary::before {
     margin-right: 6px;
     font-size: 1.1em;
 }
@@ -383,4 +370,108 @@ h1, h2 {
 
 .fa-spin {
     animation: spin 1s linear infinite;
+}
+
+
+
+/*------------------------ Replay List Styles ------------------------*/
+.replay-list-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+}
+
+.list-container {
+    margin: 20px 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.replay-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.replay-table th, .replay-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.replay-table th {
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: bold;
+    padding: 12px 15px;     /* editted */
+}
+
+.replay-table tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.replay-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+/*------------------------ Replay Mode Styles ------------------------*/
+.replay-controls {
+    display: flex;
+    gap: 2cm;
+    margin-left: auto;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.replay-controls button{
+    flex: 1;
+    margin: 0 5px;
+}
+
+.move-info {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    min-height: 10px;
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary i {
+    margin-right: 5px;
+}
+
+.highlight-current {
+    background-color: rgba(255, 255, 0, 0.3);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { background-color: rgba(255, 255, 0, 0.2); }
+    50% { background-color: rgba(255, 255, 0, 0.4); }
+    100% { background-color: rgba(255, 255, 0, 0.2); }
 }
