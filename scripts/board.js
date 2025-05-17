@@ -212,7 +212,7 @@ class GomokuGame {
 
         console.log(gameData)   // debug
 
-        fetch('http://localhost:8000/record/save-game', {
+        fetch('http://0.0.0.0:8000/record/save-game', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

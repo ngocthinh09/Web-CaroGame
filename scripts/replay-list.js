@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchGameRecords() {
         try {
-            const response = await fetch('http://localhost:8000/record/game-records');
+            const response = await fetch('http://0.0.0.0:8000/record/game-records');
             
             if (!response.ok) {
                 throw new Error('Failed to fetch game records');
