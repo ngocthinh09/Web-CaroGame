@@ -49,6 +49,11 @@ async def shutdown_db_client():
     app.mongodb_client.close()
     print("MongoDB connection closed")
 
+@app.get("/")
+async def hello_world():
+    return {
+        'message' : 'Hello World'
+    }
 
 # Save game record endpoint
 @app.post("/record/save-game", status_code=201)

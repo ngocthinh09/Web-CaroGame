@@ -212,7 +212,7 @@ class GomokuGame {
 
         console.log(gameData)   // debug
 
-        fetch('http://0.0.0.0:8000/record/save-game', {
+        fetch('https://web-carogame-production.up.railway.app/record/save-game', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
