@@ -212,7 +212,7 @@ class GomokuGame {
 
         console.log(gameData)   // debug
 
-        fetch('http://localhost:8000/record/save-game', {
+        fetch('https://web-carogame.onrender.com/record/save-game', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
