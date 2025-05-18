@@ -31,7 +31,7 @@ app = FastAPI()
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ngocthinh09.github.io"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,14 +48,6 @@ async def startup_db_client():
 async def shutdown_db_client():
     app.mongodb_client.close()
     print("MongoDB connection closed")
-
-async def check():
-    try:
-        server_status = await app.mongodb.command("serverStatus")
-        print("MongoDB server status OK")
-    except Exception as e:
-        print("MongoDB server status FAILED:", e)
-
 
 @app.get("/")
 async def hello_world():
@@ -84,7 +76,7 @@ async def save_game(gameRecord: GameRecord):
 @app.get("/record/game-records")
 async def get_game_records():
     records = []
-    cursor = app.mongodb[COLLECTION_NAME].find().sort("timestamp", -1)
+    cursor = app.mongodb[COLLECTION_NAME].find().sort("timeSaved", -1)
     
     async for document in cursor:
         document["_id"] = str(document["_id"])
@@ -94,4 +86,3 @@ async def get_game_records():
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-    check()
