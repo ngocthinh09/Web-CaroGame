@@ -49,6 +49,14 @@ async def shutdown_db_client():
     app.mongodb_client.close()
     print("MongoDB connection closed")
 
+async def check():
+    try:
+        server_status = await app.mongodb.command("serverStatus")
+        print("MongoDB server status OK")
+    except Exception as e:
+        print("MongoDB server status FAILED:", e)
+
+
 @app.get("/")
 async def hello_world():
     return {
@@ -86,3 +94,4 @@ async def get_game_records():
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    check()
