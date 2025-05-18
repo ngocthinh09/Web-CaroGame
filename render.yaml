@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: caro-fastapi
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host=0.0.0.0 --port=$PORT"
+    envVars:
+      - key: MONGODB_URL
+        value: mongodb+srv://ngocthinh09:nyw8Js1DdheTbDG1@carogamecluster.xivvcp8.mongodb.net/?retryWrites=true&w=majority&appName=CaroGameCluster
+      - key: DB_NAME
+        value: CaroGame
+      - key: COLLECTION_NAME
+        value: record
+    plan: free
