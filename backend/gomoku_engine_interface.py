@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("gomoku_engine")
 
-ENGINE_PATH = r"backend\AlphaGomoku\pbrain-AlphaGomoku"
+ENGINE_PATH = r"backend/AlphaGomoku/pbrain-AlphaGomoku"
 
 class GomokuEngine:
     """
