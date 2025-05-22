@@ -81,7 +81,6 @@ async def get_game_records():
     
     async for document in cursor:
         document["_id"] = str(document["_id"])
-        print (document[-1])    # debug lastest
         records.append(document)
     return records
 
