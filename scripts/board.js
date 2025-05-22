@@ -11,7 +11,7 @@ const cancelSaveBtn = document.getElementById('cancelSaveBtn')
 const loadingModal = document.getElementById('loadingModal');
 const successModal = document.getElementById('successModal');
 
-let linkServerBackend = 'https://carogame-production-47ba.up.railway.app'
+let linkServerBackend = 'https://web-carogame.onrender.com'
 
 class GomokuGame {
     constructor() {

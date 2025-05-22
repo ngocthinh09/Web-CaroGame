@@ -12,8 +12,8 @@ from backend.gomoku_engine_interface import GomokuEngine
 # Load environment variables
 load_dotenv()
 MONGODB_URL = os.getenv("MONGODB_URL")
-DB_NAME = os.getenv("DB_NAME")
-COLLECTION_NAME = os.getenv("COLLECTION_NAME")
+DB_NAME = "CaroGame"
+COLLECTION_NAME = "record"
 
 
 class Move(BaseModel):

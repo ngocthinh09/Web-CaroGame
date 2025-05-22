@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameRecordsBody = document.getElementById('gameRecordsBody');
     const loadingSpinner = document.getElementById('loadingSpinner');
 
-    let linkServerBackend = "https://carogame-production-47ba.up.railway.app"
+    let linkServerBackend = "https://web-carogame.onrender.com"
 
     async function fetchGameRecords() {
         try {
