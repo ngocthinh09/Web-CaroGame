@@ -19,6 +19,7 @@ class GomokuGame {
         this.currentPlayer = 'X';
         this.gameMode = sessionStorage.getItem('gameMode') || 'pvp';
         this.gameActive = true;
+        this.isBotThinking = false;
         this.winningCells = [];
         this.moveList = [];
         this.initializeBoard();
@@ -129,7 +130,7 @@ class GomokuGame {
     }
 
     makeMove(row, col) {
-        if (!this.gameActive || this.board[row][col] !== '') return;
+        if (!this.gameActive || this.board[row][col] !== '' || this.isBotThinking) return;
 
         this.board[row][col] = this.currentPlayer;
         this.updateCell(row, col);
@@ -220,12 +221,14 @@ class GomokuGame {
     }
 
     async makeBotMove() {
+        this.isBotThinking = true;
         try {
             const row = this.moveList[this.moveList.length - 1]["x"]
             const col = this.moveList[this.moveList.length - 1]["y"]
             const respone = await fetch(`${linkServerBackend}/bot/get_best_move?x=${row}&y=${col}`)
             const coordinate = await respone.json()
             console.log(coordinate)
+            this.isBotThinking = false;
             this.makeMove(coordinate['x'], coordinate['y'])
         } catch (error){
             alert('Error fetching get botMove')
