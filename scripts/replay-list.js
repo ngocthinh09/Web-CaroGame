@@ -2,10 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameRecordsBody = document.getElementById('gameRecordsBody');
     const loadingSpinner = document.getElementById('loadingSpinner');
 
+    let linkServerBackend = "https://web-carogame.onrender.com"
 
     async function fetchGameRecords() {
         try {
-            const response = await fetch('https://web-carogame.onrender.com/record/game-records');
+            const response = await fetch(`${linkServerBackend}/record/game-records`);
             
             if (!response.ok) {
                 throw new Error('Failed to fetch game records');

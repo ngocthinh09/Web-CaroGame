@@ -7,12 +7,13 @@ from typing import List, Optional
 from datetime import datetime
 from dotenv import load_dotenv
 import os
+from backend.gomoku_engine_interface import GomokuEngine
 
 # Load environment variables
 load_dotenv()
 MONGODB_URL = os.getenv("MONGODB_URL")
-DB_NAME = os.getenv("DB_NAME")
-COLLECTION_NAME = os.getenv("COLLECTION_NAME")
+DB_NAME = "CaroGame"
+COLLECTION_NAME = "record"
 
 
 class Move(BaseModel):
@@ -80,9 +81,30 @@ async def get_game_records():
     
     async for document in cursor:
         document["_id"] = str(document["_id"])
-        print (document)    # debug
         records.append(document)
     return records
+
+CaroEngine = GomokuEngine(board_size=15)
+
+@app.get("/bot/start_engine")
+async def start_engine():
+    successStart = CaroEngine.start()
+    return "Engine started successfully" if successStart else "Failed to start engine"
+
+@app.get("/bot/stop_engine")
+async def close_engine():
+    CaroEngine.close()
+    return "Engine closed successfully"
+
+@app.get("/bot/get_best_move")
+async def get_best_move(x : int, y : int):
+    print(f'Your move: {(x, y)}')
+    bestX, bestY = CaroEngine.get_best_move(x, y)
+    print(f'AI move: {(bestX, bestY)}')    
+    return {
+        "x" : bestX,
+        "y" : bestY
+    }   
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

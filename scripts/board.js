@@ -11,12 +11,15 @@ const cancelSaveBtn = document.getElementById('cancelSaveBtn')
 const loadingModal = document.getElementById('loadingModal');
 const successModal = document.getElementById('successModal');
 
+let linkServerBackend = 'https://web-carogame.onrender.com'
+
 class GomokuGame {
     constructor() {
         this.board = Array(BoardSize).fill().map(() => Array(BoardSize).fill(''));
         this.currentPlayer = 'X';
         this.gameMode = sessionStorage.getItem('gameMode') || 'pvp';
         this.gameActive = true;
+        this.isBotThinking = false;
         this.winningCells = [];
         this.moveList = [];
         this.initializeBoard();
@@ -79,6 +82,9 @@ class GomokuGame {
         this.gameActive = true;
         this.winningCells = [];
         this.moveList = [];
+        if (this.gameMode === 'pve'){
+            this.requestCloseEngine();
+        }
         this.initializeBoard();
         this.updateTurnIndicator();
         this.clearWinMessage();
@@ -98,12 +104,33 @@ class GomokuGame {
                 boardElement.appendChild(cell);
             }
         }
-
         saveBtn.style.display = 'none';
+        
+        if (this.gameMode === 'pve'){
+            this.requestStartEngine()
+        }
+    }
+
+    async requestStartEngine(){
+        try {
+            const response = await fetch(`${linkServerBackend}/bot/start_engine`)
+            console.log(response)
+        } catch (error){
+            alert('Error fetching start engine')
+        }
+    }
+
+    async requestCloseEngine(){
+        try{
+            const respone = await fetch(`${linkServerBackend}/bot/stop_engine`)
+            console.log(respone)
+        } catch (error){
+            alert('Error fetching close engine')
+        }
     }
 
     makeMove(row, col) {
-        if (!this.gameActive || this.board[row][col] !== '') return;
+        if (!this.gameActive || this.board[row][col] !== '' || this.isBotThinking) return;
 
         this.board[row][col] = this.currentPlayer;
         this.updateCell(row, col);
@@ -119,6 +146,9 @@ class GomokuGame {
             this.showWinMessage(this.currentPlayer);
             this.highlightWinningCells();
             saveBtn.style.display = 'flex';
+            if (this.gameMode === 'pve'){
+                this.requestCloseEngine();
+            }
             return;
         }
 
@@ -190,14 +220,18 @@ class GomokuGame {
         return count;
     }
 
-    makeBotMove() {
-        for (let i = 0; i < 15; i++) {
-            for (let j = 0; j < 15; j++) {
-                if (this.board[i][j] === '') {
-                    this.makeMove(i, j);
-                    return;
-                }
-            }
+    async makeBotMove() {
+        this.isBotThinking = true;
+        try {
+            const row = this.moveList[this.moveList.length - 1]["x"]
+            const col = this.moveList[this.moveList.length - 1]["y"]
+            const respone = await fetch(`${linkServerBackend}/bot/get_best_move?x=${row}&y=${col}`)
+            const coordinate = await respone.json()
+            console.log(coordinate)
+            this.isBotThinking = false;
+            this.makeMove(coordinate['x'], coordinate['y'])
+        } catch (error){
+            alert('Error fetching get botMove')
         }
     }
 
@@ -212,7 +246,7 @@ class GomokuGame {
 
         console.log(gameData)   // debug
 
-        fetch('https://web-carogame.onrender.com/record/save-game', {
+        fetch(`${linkServerBackend}/record/save-game`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
