@@ -3,8 +3,16 @@
 This project presents a web-based implementation of the classic Caro game, also known as Gomoku or Five in a Row. It allows users to play against each other (Player vs Player) or challenge an AI opponent (Player vs Bot). The application features a clean user interface, game state saving capabilities, and utilizes a dedicated backend server to manage game logic and AI interactions. The goal is to provide an accessible and engaging Caro experience directly within a web browser.
 
 
+## :scroll: Table of Contents
 
-## Features
+- [:sparkles: Features](#sparkles-features)
+- [:gear: Setup and Installation](#gear-setup-and-installation)
+- [:rocket: Usage](#rocket-usage)
+- [:building_construction: Architecture](#building_construction-architecture)
+- [:link: References](#link-references)
+
+
+## :sparkles: Features
 
 This Web Caro Game boasts several features designed for an enjoyable user experience:
 
@@ -19,7 +27,7 @@ This Web Caro Game boasts several features designed for an enjoyable user experi
 
 
 
-## Setup and Installation
+## :gear: Setup and Installation
 
 To run this Web Caro Game project locally, you will need Python 3.x and pip installed. Follow these steps:
 
@@ -78,7 +86,7 @@ To run this Web Caro Game project locally, you will need Python 3.x and pip inst
     uvicorn main:app --reload --port 8000
     ```
     The server should now be running, typically at `http://127.0.0.1:8000`.
-    You need change constant varible `linkServerBackend` in file `scripts/board.js` and `scripts/replay-list.js`
+    You need change constant varible `linkServerBackend` in file `scripts/board.js` and `scripts/replay-list.js` to `http://localhost:8000`
     
 6.  **Access the Frontend:**
     No separate build step seems required for the frontend. Simply open the HTML files located in the root directory (`index.html`, `game.html`, etc.) directly in your web browser.
@@ -87,7 +95,7 @@ To run this Web Caro Game project locally, you will need Python 3.x and pip inst
 
 
 
-## Usage
+## :rocket: Usage
 
 Once the backend server is running and the frontend HTML files are opened in a browser (with the backend URL correctly configured in the JavaScript files for local testing), follow these steps to play:
 
@@ -124,7 +132,7 @@ Once the backend server is running and the frontend HTML files are opened in a b
 
 
 
-## Architecture
+## :building_construction: Architecture
 
 The Web Caro Game employs a client-server architecture:
 
@@ -162,7 +170,7 @@ The Web Caro Game employs a client-server architecture:
 
 
 
-## References
+## :link: References
 
 *   **Original Repository:** [https://github.com/ngocthinh09/Web-CaroGame](https://github.com/ngocthinh09/Web-CaroGame)
 *   **AI Engine (AlphaGomoku):** [https://github.com/MaciejKozarzewski/AlphaGomoku](https://github.com/MaciejKozarzewski/AlphaGomoku)
