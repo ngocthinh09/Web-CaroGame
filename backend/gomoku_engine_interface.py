@@ -18,8 +18,7 @@ ENGINE_PATH = r"backend/AlphaGomoku/pbrain-AlphaGomoku"
 
 class GomokuEngine:
     """
-    Lớp giao tiếp với engine Caro (Gomoku) thông qua stdin/stdout
-    Sử dụng giao thức Gomocup theo đúng tài liệu protocol
+    Lớp giao tiếp với engine Caro (Gomoku) thông qua stdin/stdout và sử dụng giao thức Gomocup
     """
     
     def __init__(self, engine_path: str = ENGINE_PATH, board_size: int = 15, timeout: int = 15000):
@@ -27,17 +26,16 @@ class GomokuEngine:
         Khởi tạo engine Gomoku
         
         Args:
-            engine_path: Đường dẫn đến file thực thi engine (.exe)
+            engine_path: Đường dẫn đến file thực thi engine
             board_size: Kích thước bàn cờ (15 cho standard, 20 cho freestyle)
             timeout: Thời gian tối đa chờ engine trả lời (milliseconds)
         """
         self.engine_path = engine_path
         self.board_size = board_size
-        self.timeout = timeout  # milliseconds
+        self.timeout = timeout
         self.process = None
         self.is_windows = platform.system() == "Windows"
         
-        # Kiểm tra file engine tồn tại
         if not os.path.exists(engine_path):
             raise FileNotFoundError(f"Engine file not found: {engine_path}")
     
@@ -56,8 +54,8 @@ class GomokuEngine:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                bufsize=1,  # Line buffered
-                shell=self.is_windows  # Chỉ dùng shell=True trên Windows
+                bufsize=1,
+                shell=self.is_windows
             )
             
             # Khởi tạo bàn cờ với kích thước đã chọn
@@ -66,10 +64,10 @@ class GomokuEngine:
             if "OK" in response:
                 logger.info(f"Engine started successfully with board size {self.board_size}")
                 
-                # Thiết lập các thông số cơ bản
+                # Thiết lập các thông số
                 self.send_command(f"INFO timeout_turn {self.timeout}")
-                self.send_command(f"INFO timeout_match {self.timeout * 100}")  # 100 lượt đi
-                self.send_command("INFO rule 1")  # Standard rule
+                self.send_command(f"INFO timeout_match {self.timeout * 100}")
+                self.send_command("INFO rule 1")
                 
                 return True
             else:
@@ -116,24 +114,21 @@ class GomokuEngine:
         
         # Đọc output cho đến khi nhận được phản hồi hợp lệ hoặc hết thời gian
         start_time = time.time()
-        timeout_seconds = self.timeout / 1000  # Chuyển từ ms sang giây
+        timeout_seconds = self.timeout / 1000
         response_lines = []
         
         while time.time() - start_time < timeout_seconds:
-            # Kiểm tra xem có dữ liệu để đọc không
             line = self.process.stdout.readline().strip()
             if line:
                 logger.debug(f"Received: {line}")
                 response_lines.append(line)
                 
-                # Nếu là nước đi (định dạng x,y) hoặc thông báo lỗi, trả về ngay
                 if (len(line.split(",")) == 2 and all(part.strip().isdigit() for part in line.split(","))) or \
                    line.startswith("ERROR") or \
                    line.startswith("UNKNOWN") or \
                    line == "OK":
                     break
                 
-                # Nếu là MESSAGE, tiếp tục đọc
                 if line.startswith("MESSAGE"):
                     continue
             
@@ -141,7 +136,6 @@ class GomokuEngine:
             if self.process.poll() is not None:
                 break
                 
-            # Ngủ một chút để tránh CPU cao
             time.sleep(0.01)
         
         return "\n".join(response_lines)
@@ -161,35 +155,28 @@ class GomokuEngine:
             self.process.stdin.write("BOARD\n")
             self.process.stdin.flush()
             
-            # Gửi từng nước đi trên bàn cờ
             for i in range(self.board_size):
                 for j in range(self.board_size):
-                    if board[i][j] == 1:  # Người chơi 1
+                    if board[i][j] == 1:
                         self.process.stdin.write(f"{j},{i},1\n")
                         self.process.stdin.flush()
-                    elif board[i][j] == 2:  # Người chơi 2
+                    elif board[i][j] == 2:
                         self.process.stdin.write(f"{j},{i},2\n")
                         self.process.stdin.flush()
             
-            # Kết thúc thiết lập bàn cờ
             self.process.stdin.write("DONE\n")
             self.process.stdin.flush()
             
-            # Đọc phản hồi
             response = self._read_response()
             
-            # Kiểm tra lỗi
             if "ERROR" in response or "UNKNOWN" in response:
                 logger.error(f"Error setting board: {response}")
                 return None, None
             
-            # Phân tích nước đi từ phản hồi
             for line in response.split('\n'):
-                # Bỏ qua các dòng MESSAGE
                 if line.startswith("MESSAGE"):
                     continue
                     
-                # Kiểm tra xem có phải định dạng x,y không
                 parts = line.strip().split(',')
                 if len(parts) == 2 and all(part.strip().isdigit() for part in parts):
                     x, y = int(parts[0]), int(parts[1])
@@ -215,21 +202,16 @@ class GomokuEngine:
             Tuple[int, int]: Tọa độ (x, y) của nước đi tốt nhất, hoặc (None, None) nếu có lỗi
         """
         try:
-            # Gửi lệnh TURN để yêu cầu engine đưa ra nước đi
             response = self.send_command(f"TURN {x},{y}")
             
-            # Kiểm tra lỗi
             if "ERROR" in response or "UNKNOWN" in response:
                 logger.error(f"Engine error: {response}")
                 return None, None
             
-            # Phân tích nước đi từ phản hồi
             for line in response.split('\n'):
-                # Bỏ qua các dòng MESSAGE
                 if line.startswith("MESSAGE"):
                     continue
                     
-                # Kiểm tra xem có phải định dạng x,y không
                 parts = line.strip().split(',')
                 if len(parts) == 2 and all(part.strip().isdigit() for part in parts):
                     move_x, move_y = int(parts[0]), int(parts[1])
@@ -251,21 +233,16 @@ class GomokuEngine:
             Tuple[int, int]: Tọa độ (x, y) của nước đi đầu tiên, hoặc (None, None) nếu có lỗi
         """
         try:
-            # Gửi lệnh BEGIN để yêu cầu engine đi nước đầu tiên
             response = self.send_command("BEGIN")
             
-            # Kiểm tra lỗi
             if "ERROR" in response or "UNKNOWN" in response:
                 logger.error(f"Engine error: {response}")
                 return None, None
             
-            # Phân tích nước đi từ phản hồi
             for line in response.split('\n'):
-                # Bỏ qua các dòng MESSAGE
                 if line.startswith("MESSAGE"):
                     continue
                     
-                # Kiểm tra xem có phải định dạng x,y không
                 parts = line.strip().split(',')
                 if len(parts) == 2 and all(part.strip().isdigit() for part in parts):
                     x, y = int(parts[0]), int(parts[1])
@@ -305,13 +282,10 @@ class GomokuEngine:
         """
         if self.process is not None:
             try:
-                # Gửi lệnh END để kết thúc
                 self.send_command("END")
                 
-                # Chờ một chút để engine xử lý lệnh END
                 time.sleep(0.5)
                 
-                # Đóng process
                 self.process.terminate()
                 self.process.wait(timeout=2)
                 
@@ -328,52 +302,3 @@ class GomokuEngine:
             
             finally:
                 self.process = None
-
-# def example_usage():
-#     engine = GomokuEngine(board_size=15)
-    
-#     try:
-#         if not engine.start():
-#             print("Failed to start engine")
-#             return
-        
-#         board = [[0 for _ in range(15)] for _ in range(15)]
-        
-#         # # Phương pháp 1: Sử dụng BEGIN để engine đi nước đầu tiên
-#         # x, y = engine.begin_game()
-#         # if x is not None and y is not None:
-#         #     print(f"Engine's first move: ({x}, {y})")
-            
-#         #     # Giả sử người chơi đi nước tiếp theo ở (8, 8)
-#         #     x, y = engine.get_best_move(8, 8)
-#         #     if x is not None and y is not None:
-#         #         print(f"Engine's response: ({x}, {y})")
-        
-#         # Phương pháp 2: Thiết lập bàn cờ hiện tại
-#         # Tạo bàn cờ trống (0: trống, 1: người chơi, 2: AI)
-#         # board = [[0 for _ in range(15)] for _ in range(15)]
-        
-#         # # Giả sử đã có một số nước đi
-#         # board[7][7] = 1  # Người chơi ở vị trí (7, 7)
-#         # board[8][8] = 2  # AI ở vị trí (8, 8)
-        
-#         # # Thiết lập trạng thái bàn cờ và lấy nước đi tiếp theo
-#         # x, y = engine.set_board(board)
-#         # if x is not None and y is not None:
-#         #     print(f"Engine's next move: ({x}, {y})")
-        
-#         while (True):
-#             print(np.array(board))
-#             print("Enter your move")
-#             x, y = map(int, input().split())
-#             board[x][y] = 1
-            
-#             x, y = engine.get_best_move(x, y)
-#             if x is not None and y is not None:
-#                 board[x][y] = 2
-                     
-#     finally:
-#         engine.close()
-
-# if __name__ == "__main__":
-#     example_usage()
